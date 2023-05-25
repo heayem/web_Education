@@ -1,0 +1,19 @@
+
+++create command after create repo
+git init
+git branch -M main
+git remote add origin https://github.com/heayem/web_Education.git
+
+++git start to push code 
+git add . (add all int project) (git add README.md => add only 1 file)
+git status (check file that will push)
+git commit -m "first commit"
+git push -u origin main
+
+++when change and commit again
+git add . (add all int project) (git add README.md => add only 1 file)
+git status (check file that will push)
+git commit -m "first commit"
+git push -u origin main
+
+

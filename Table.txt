@@ -1,0 +1,45 @@
+=User table
+	-user_id (pk)
+	-name
+	-gender
+	-email
+	-password
+	-create_date
+	-role
+	-status
+=Time log
+	-id
+	-user_id (fk)
+	-timeLogIn
+	-timelogOut
+=role
+	-id(pk)
+	-name
+	-status
+---------------------------------------------
+=course table
+	-id(pk)
+	-name
+	-price
+	-create_at
+	-create_by(fk)
+	-status
+=lesson table
+	-id(pk)
+	-course_id(fk)
+	-lesson
+	-status
+	-create_by(fk)
+=class table
+	-id(pk)
+	-course_id(fk)
+	-user_id(fk)// teacher + student 
+	-status
+	-create_at
+	-order_num
+	-description
+	
+
+	
+	
+
