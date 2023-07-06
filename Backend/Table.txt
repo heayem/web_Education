@@ -5,40 +5,59 @@
 	-email
 	-password
 	-create_date
-	-role
+	-role //fk
 	-status
-=Time log
-	-id
-	-user_id (fk)
-	-timeLogIn
-	-timelogOut
 =role
 	-id(pk)
-	-name
-	-status
+	-name // student teacher admin 
+	-status 
 ---------------------------------------------
-=course table
-	-id(pk)
-	-name
-	-price
+==category 
+	-cat_id
+	-name // math , Program , English 
+	-create_by(user_id)
 	-create_at
-	-create_by(fk)
+	-status
+	
+=course table
+	-id(pk) 
+	-cat_id(fk)
+	-name
+	-price 5$
+	-discount 5%  
+	-order_num
+	-create_at (date)
+	-create_by(fk user_id)
+	-description
 	-status
 =lesson table
 	-id(pk)
 	-course_id(fk)
 	-lesson
 	-status
-	-create_by(fk)
+	-create_at(date)
+	-create_by(fk user_id)
+==video table
+	-id (pk)
+	-name
+	-lesson_Id(fk)
+	-create_at(date)
+	-create_by(fk user_id)
+	-course_id(fk)
+	-status
 =class table
 	-id(pk)
-	-course_id(fk)
+	-course_id(fk) // 
 	-user_id(fk)// teacher + student 
 	-status
 	-create_at
-	-order_num
 	-description
-	
+=oder 
+	-telegram (link)
+
+
+
+
 
 	
 	

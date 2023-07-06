@@ -1,11 +1,9 @@
 const db = require("../configure/db.connection")
 const { isEmpty } = require("../util/service")
 const bcrypt = require('bcrypt')
-const user = require("../Class_Model/class_Model")
-
 
 const getList = (req, res) => {
-    db.query("SELECT User_Id,Name,Gender,Email,Create_at,Role,Status FROM user", (err, row) => {
+    db.query("SELECT * FROM user", (err, row) => {
         if (err) {
             res.json({
                 error: true,
@@ -32,8 +30,7 @@ const getListByOne = (req, res) => {
         })
         return false
     }
-
-    db.query("SELECT User_Id,Name,Gender,Email,Create_at,Role,Status FROM user WHERE User_Id=?", [id], (err, row) => {
+    db.query("SELECT * FROM user WHERE User_Id=?", [id], (err, row) => {
         if (err) {
             res.json({
                 error: true,
