@@ -30,13 +30,6 @@
 	-create_by(fk user_id)
 	-description
 	-status
-=lesson table
-	-id(pk)
-	-course_id(fk)
-	-lesson
-	-status
-	-create_at(date)
-	-create_by(fk user_id)
 ==video table
 	-id (pk)
 	-name

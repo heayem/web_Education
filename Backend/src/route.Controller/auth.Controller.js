@@ -21,11 +21,10 @@ const login = (req, res) => {
                 if (row?.length > 0) {
                     let dataPassword = row[0].Password
                     if (bcrypt.compareSync(newUser._password, dataPassword)) {
-                        newUser._role = row[0].Role
+                        // newUser._role = row[0].Role
                         delete row[0]?.Password
                         const user = row[0]
                         const access_token = genarateToken(user)
-                        // const access_token = ""
                         res.json({
                             message: "login successful",
                             profile: row[0],

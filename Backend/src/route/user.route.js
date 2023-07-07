@@ -4,9 +4,9 @@ const { validateToken } = require("../route.Controller/auth.Controller")
 const route = (app) => {
     app.get("/api/user", validateToken, userController.getList)
     app.get("/api/user/:id", validateToken, userController.getListByOne)
-    app.delete("/user/:id", userController.Delete)
-    app.post("/user", userController.create)
-    app.put("/user", userController.update)
+    app.delete("/api/user/:id", validateToken, userController.Delete)
+    app.post("/api/user", validateToken, userController.create)
+    app.put("/api/user", validateToken, userController.update)
 }
 
 module.exports = route

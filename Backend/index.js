@@ -8,6 +8,7 @@ app.use(express.urlencoded({ extended: false }))
 
 require("./src/route/user.route")(app)
 require("./src/route/auth.route")(app)
+require("./src/route/category.route")(app)
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
