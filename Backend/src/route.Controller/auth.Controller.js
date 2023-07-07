@@ -22,9 +22,8 @@ const login = (req, res) => {
                     let dataPassword = row[0].Password
                     if (bcrypt.compareSync(newUser._password, dataPassword)) {
                         newUser._role = row[0].Role
-                        const user = row[0]
-                        console.log(user)
                         delete row[0]?.Password
+                        const user = row[0]
                         const access_token = genarateToken(user)
                         // const access_token = ""
                         res.json({
@@ -62,7 +61,8 @@ const login = (req, res) => {
 }
 
 const genarateToken = (user) => {
-    return jwt.sign({ user: user }, process.env.ACCESS_TOKEN, { expiresIn: "10m" })
+    return jwt.sign({ user: user }, process.env.ACCESS_TOKEN)
+    // return jwt.sign({ user: user }, process.env.ACCESS_TOKEN, { expiresIn: "10m" })
 }
 
 const checkPermission = (req, permission_code) => {

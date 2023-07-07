@@ -39,20 +39,27 @@ const getListByOne = (req, res) => {
         })
         return false
     }
+    if (checkPermission(req, 1)) {
+        db.query("SELECT User_Id,Name,Gender,Email,Create_at,Role,Status FROM user WHERE User_Id=?", [id], (err, row) => {
+            if (err) {
+                res.json({
+                    error: true,
+                    message: err
+                })
+            }
+            else {
+                res.json({
+                    data: row
+                })
+            }
+        })
+    } else {
+        res.json({
+            error: false,
+            message: "You don't has permission access this method!",
+        });
+    }
 
-    db.query("SELECT User_Id,Name,Gender,Email,Create_at,Role,Status FROM user WHERE User_Id=?", [id], (err, row) => {
-        if (err) {
-            res.json({
-                error: true,
-                message: err
-            })
-        }
-        else {
-            res.json({
-                data: row
-            })
-        }
-    })
 }
 const create = (req, res) => {
 
