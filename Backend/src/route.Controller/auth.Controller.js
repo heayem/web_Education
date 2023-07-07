@@ -2,7 +2,8 @@ const user = require("../Class_Model/class_Model")
 const db = require("../configure/db.connection")
 const bcrypt = require("bcrypt")
 const { isEmpty } = require("../util/service")
-
+const jwt = require("jsonwebtoken")
+require('dotenv').config()
 
 
 const login = (req, res) => {
@@ -21,9 +22,15 @@ const login = (req, res) => {
                     let dataPassword = row[0].Password
                     if (bcrypt.compareSync(newUser._password, dataPassword)) {
                         newUser._role = row[0].Role
+                        const user = row[0]
+                        console.log(user)
+                        delete row[0]?.Password
+                        const access_token = genarateToken(user)
+                        // const access_token = ""
                         res.json({
                             message: "login successful",
-                            profile: row[0]
+                            profile: row[0],
+                            access_token: access_token
                         })
                     } else {
                         res.json({
@@ -54,4 +61,44 @@ const login = (req, res) => {
 
 }
 
-module.exports = { login }
+const genarateToken = (user) => {
+    return jwt.sign({ user: user }, process.env.ACCESS_TOKEN, { expiresIn: "10m" })
+}
+
+const checkPermission = (req, permission_code) => {
+    if (req.user) {
+        var role = req.user.Role;
+        var isPermission = false;
+        if (role == permission_code) {
+            isPermission = true;
+        }
+        return isPermission;
+    }
+    return false;
+}
+
+const validateToken = (req, res, next) => {
+    var AuthHeader = req.headers["authorization"]
+    if (AuthHeader) {
+        AuthHeader = AuthHeader.split(" ");
+        var token = AuthHeader[1]
+        jwt.verify(token, process.env.ACCESS_TOKEN, (err, user) => {
+            if (!err) {
+                req.user = user.user
+                next();
+            } else {
+                res.json({
+                    error: true,
+                    message: "Invalid token"
+                })
+            }
+        })
+    } else {
+        res.json({
+            error: true,
+            message: "Please fill in token"
+        })
+    }
+}
+
+module.exports = { login, checkPermission, validateToken }
