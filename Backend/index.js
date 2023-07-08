@@ -10,6 +10,7 @@ app.use(cors({ origin: "*" }))
 require("./src/route/user.route")(app)
 require("./src/route/auth.route")(app)
 require("./src/route/category.route")(app)
+require("./src/route/course.route")(app)
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

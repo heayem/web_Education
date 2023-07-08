@@ -5,3 +5,19 @@ body : {
   "email":"Heayem7@gmail.com",
   "password":"12345"
 }
+
+### user 
+    -create user 
+        url : localhost:8080/api/user
+    -method : post 
+     headers: {
+            Authorization: `Bearer ${token}`
+    }
+    -body :{
+            "Name": "HeaYem",
+            "Gender": "Male",
+            "Email": "Heayem7@gmail.com",
+            "Password":"12345",
+            "Role": "1"
+    }
+  

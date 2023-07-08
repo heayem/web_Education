@@ -3,7 +3,7 @@ const { isEmpty } = require("../util/service")
 const bcrypt = require('bcrypt')
 
 const getList = (req, res) => {
-    db.query("SELECT * FROM user", (err, row) => {
+    db.query("SELECT * FROM course", (err, row) => {
         if (err) {
             res.json({
                 error: true,
@@ -30,7 +30,7 @@ const getListByOne = (req, res) => {
         })
         return false
     }
-    db.query("SELECT * FROM user WHERE User_Id=?", [id], (err, row) => {
+    db.query("SELECT * FROM course WHERE Id=?", [id], (err, row) => {
         if (err) {
             res.json({
                 error: true,
@@ -44,6 +44,7 @@ const getListByOne = (req, res) => {
         }
     })
 }
+
 const create = (req, res) => {
 
     var {
@@ -229,7 +230,7 @@ const Delete = (req, res) => {
         })
         return false
     }
-    db.query("DELETE FROM user WHERE User_Id=?", [id], (err, row) => {
+    db.query("DELETE FROM course WHERE Id=?", [id], (err, row) => {
         if (err) {
             res.json({
                 error: true,
