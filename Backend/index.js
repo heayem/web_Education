@@ -9,6 +9,7 @@ app.use(cors({ origin: "*" }))
 
 require("./src/route/user.route")(app)
 require("./src/route/auth.route")(app)
+require("./src/route/role.route")(app)
 require("./src/route/category.route")(app)
 require("./src/route/course.route")(app)
 

@@ -1,20 +1,28 @@
 const db = require("../configure/db.connection")
 const { isEmpty } = require("../util/service")
-const bcrypt = require('bcrypt')
+const { checkPermission } = require("./auth.Controller")
 
 const getList = (req, res) => {
-    db.query("SELECT * FROM user", (err, row) => {
-        if (err) {
-            res.json({
-                error: true,
-                message: err
-            })
-        } else {
-            res.json({
-                data: row
-            })
-        }
-    })
+    if (checkPermission(req, 1)) {
+
+        db.query("SELECT * FROM role", (err, row) => {
+            if (err) {
+                res.json({
+                    error: true,
+                    message: err
+                })
+            } else {
+                res.json({
+                    data: row
+                })
+            }
+        })
+    } else {
+        res.json({
+            error: false,
+            message: "You don't has permission access this method!",
+        })
+    }
 }
 
 const getListByOne = (req, res) => {
@@ -47,7 +55,6 @@ const getListByOne = (req, res) => {
 const create = (req, res) => {
 
     var {
-        // User_Id,
         Name,
         Gender,
         Email,

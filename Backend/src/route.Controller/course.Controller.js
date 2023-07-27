@@ -48,7 +48,6 @@ const getListByOne = (req, res) => {
 const create = (req, res) => {
 
     var {
-        // User_Id,
         Name,
         Gender,
         Email,
