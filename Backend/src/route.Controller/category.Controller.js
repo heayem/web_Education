@@ -17,7 +17,7 @@ const getList = (req, res) => {
     })
 }
 
-const getListByOne = (req, res) => {
+const getListByOne = async (req, res) => {
     const id = req.params.id
     let message = {}
     if (isEmpty(id)) {
@@ -30,7 +30,7 @@ const getListByOne = (req, res) => {
         })
         return false
     }
-    db.query("SELECT * FROM category WHERE cate_id=?", [id], (err, row) => {
+    await db.query("SELECT * FROM category WHERE cate_id=?", [id], (err, row) => {
         if (err) {
             res.json({
                 error: true,
@@ -53,7 +53,7 @@ const getListByOne = (req, res) => {
     })
 }
 
-const create = (req, res) => {
+const create = async (req, res) => {
     if (checkPermission(req, 1)) {
         var {
             Name,
@@ -74,7 +74,7 @@ const create = (req, res) => {
             })
             return false
         }
-        db.query("SELECT COUNT(name) FROM user WHERE name=?", [Name], (err, row) => {
+        await db.query("SELECT COUNT(name) FROM user WHERE name=?", [Name], async (err, row) => {
             if (err) {
                 res.json({
                     error: true,
@@ -89,7 +89,7 @@ const create = (req, res) => {
                 } else {
                     var sql = "INSERT INTO category (Name,create_at,status) VALUE(?,?,?)"
                     var parameter = [Name, new Date(), Status]
-                    db.query(sql, parameter, (err1, row) => {
+                    await db.query(sql, parameter, (err1, row) => {
                         if (err1) {
                             res.json({
                                 error: true,
@@ -116,15 +116,12 @@ const create = (req, res) => {
             }
         })
     } else {
-        res.json({
-            error: false,
-            message: "You don't has permission access this method!",
-        });
+        res.sendStatus(401)
     }
 
 }
 
-const update = (req, res) => {
+const update = async (req, res) => {
 
     var {
         cate_id,
@@ -152,7 +149,7 @@ const update = (req, res) => {
     var sql = "UPDATE category SET name=?,status=? WHERE cate_id=?"
     var parameter = [Name, Status, cate_id]
     if (checkPermission(req, 1)) {
-        db.query("SELECT COUNT(name) AS name FROM category WHERE name=?", [Name], (err, row) => {
+        await db.query("SELECT COUNT(name) AS name FROM category WHERE name=?", [Name], (err, row) => {
             if (err) {
                 res.json({
                     error: true,
@@ -192,15 +189,12 @@ const update = (req, res) => {
             }
         })
     } else {
-        res.json({
-            error: false,
-            message: "You don't has permission access this method!",
-        });
+        res.sendStatus(401)
     }
 
 }
 
-const Delete = (req, res) => {
+const Delete = async (req, res) => {
     const id = req.params.id
     let message = {}
     if (isEmpty(id)) {
@@ -213,29 +207,33 @@ const Delete = (req, res) => {
         })
         return false
     }
-    db.query("DELETE FROM category WHERE cate_id=?", [id], (err, row) => {
-        if (err) {
-            res.json({
-                error: true,
-                message: err
-            })
-        }
-        else {
-            if (row.affectedRows > 0) {
-                res.json({
-                    message: "Delete success "
-                })
-            } else {
-
+    if (checkPermission(req, 1)) {
+        await db.query("DELETE FROM category WHERE cate_id=?", [id], (err, row) => {
+            if (err) {
                 res.json({
                     error: true,
-                    message: "id not found"
+                    message: err
                 })
             }
+            else {
+                if (row.affectedRows > 0) {
+                    res.json({
+                        message: "Delete success "
+                    })
+                } else {
+
+                    res.json({
+                        error: true,
+                        message: "id not found"
+                    })
+                }
 
 
-        }
-    })
+            }
+        })
+    } else {
+        res.sendStatus(401)
+    }
 
 }
 

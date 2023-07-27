@@ -93,10 +93,7 @@ const validateToken = (req, res, next) => {
             }
         })
     } else {
-        res.json({
-            error: true,
-            message: "Please fill in token"
-        })
+        res.sendStatus(401)
     }
 }
 

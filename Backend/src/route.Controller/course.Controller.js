@@ -1,7 +1,6 @@
 const db = require("../configure/db.connection")
 const { isEmpty } = require("../util/service")
-const bcrypt = require('bcrypt')
-
+const { checkPermission } = require("./auth.Controller")
 const getList = (req, res) => {
     db.query("SELECT * FROM course", (err, row) => {
         if (err) {
@@ -45,35 +44,35 @@ const getListByOne = (req, res) => {
     })
 }
 
-const create = (req, res) => {
+
+const create = async (req, res) => {
 
     var {
-        Name,
-        Gender,
-        Email,
-        Password,
-        Role
+        name,
+        cate_id,
+        price,
+        discount,
+        order_num,
+        description,
     } = req.body
+
     let message = {}
-    if (isEmpty(Name)) {
-        message.Name = "please fil in Name "
+    if (isEmpty(name)) {
+        message.name = "please fil in name "
     }
-    if (isEmpty(Gender)) {
-        message.Gender = "please fil in Gender "
-    }
-
-    if (isEmpty(Email)) {
-        message.Email = "please fil in Email "
+    if (isEmpty(cate_id)) {
+        message.cate_id = "please fil in cate_id "
     }
 
-    if (isEmpty(Password)) {
-        message.Password = "please fil in Password "
+    if (isEmpty(price)) {
+        message.price = "please fil in price "
     }
-
-    if (isEmpty(Role)) {
-        message.Role = "please fil in Role "
+    if (isEmpty(order_num)) {
+        message.order_num = "please fil in order_num "
     }
-
+    if (isEmpty(description)) {
+        message.description = "please fil in description "
+    }
     if (Object.keys(message).length > 0) {
         res.json({
             error: true,
@@ -81,89 +80,60 @@ const create = (req, res) => {
         })
         return false
     }
-    db.query("SELECT COUNT(Email) FROM user WHERE Email=?", [Email], (err, row) => {
-        if (err) {
-            res.json({
-                error: true,
-                message: err
-            })
-        } else {
-            if (row.length > 0) {
+    if (checkPermission(req, 1)) {
+        var sql = "INSERT INTO course (name,cate_id,price,discount,order_num,description) VALUE(?,?,?,?,?,?)"
+        var parameter = [name, cate_id, price, discount, order_num, description]
+        await db.query(sql, parameter, (err1, row) => {
+            if (err1) {
                 res.json({
                     error: true,
-                    message: "USer already exist"
+                    message: err1
                 })
             } else {
-
-                Password = bcrypt.hashSync(Password, 10)
-                var sql = "INSERT INTO user (Name,Gender,Email,Password,Role) VALUE(?,?,?,?,?)"
-                var parameter = [Name, Gender, Email, Password, Role]
-                db.query(sql, parameter, (err1, row) => {
-                    if (err1) {
-                        res.json({
-                            error: true,
-                            message: err1
-                        })
-                    }
-                    else {
-                        if (row.affectedRows > 0) {
-                            res.json({
-                                message: "Insert success "
-                            })
-                        } else {
-
-                            res.json({
-                                error: true,
-                                message: "Please check "
-                            })
-                        }
-
-
-                    }
+                res.json({
+                    error: false,
+                    message: "Insert Sucess!"
                 })
             }
-        }
-    })
+        })
+    } else {
+        res.sendStatus(401)
+    }
 
 }
 
-const update = (req, res) => {
+const update = async (req, res) => {
 
     var {
-        User_Id,
-        Name,
-        Gender,
-        Email,
-        Password,
-        Role,
+        Id,
+        name,
+        cate_id,
+        price,
+        discount,
+        order_num,
+        description,
         Status
     } = req.body
+
     let message = {}
-    if (isEmpty(User_Id)) {
-        message.User_Id = "id is require "
+    if (isEmpty(Id)) {
+        message.Id = "please fil in Id "
     }
-    if (isEmpty(Name)) {
-        message.Name = "please fil in Name "
+    if (isEmpty(name)) {
+        message.name = "please fil in name "
     }
-    if (isEmpty(Gender)) {
-        message.Gender = "please fil in Gender "
+    if (isEmpty(cate_id)) {
+        message.cate_id = "please fil in cate_id "
     }
-
-    if (isEmpty(Email)) {
-        message.Email = "please fil in Email "
+    if (isEmpty(price)) {
+        message.price = "please fil in price "
     }
-
-    if (isEmpty(Password)) {
-        message.Password = "please fil in Password "
+    if (isEmpty(order_num)) {
+        message.order_num = "please fil in order_num "
     }
-
-    if (isEmpty(Role)) {
-        message.Role = "please fil in Role "
+    if (isEmpty(description)) {
+        message.description = "please fil in description "
     }
-    if (isEmpty(Status)) {
-        message.Status = "please fil in Status "
-    }
-
     if (Object.keys(message).length > 0) {
         res.json({
             error: true,
@@ -171,52 +141,57 @@ const update = (req, res) => {
         })
         return false
     }
-    var sql = "UPDATE user SET Name=?,Gender=?,Email=?,Role=?,Status=? WHERE User_Id=?"
-    var parameter = [Name, Gender, Email, Password, Role, Status, User_Id]
-    db.query("SELECT COUNT(Email) FROM user WHERE Email=?", [Email], (err, row) => {
-        if (err) {
-            res.json({
-                error: true,
-                message: err
-            })
-        } else {
-            if (row.length > 0) {
+    if (checkPermission(req, 1)) {
+        var sql = "UPDATE course SET name=IFNULL(?,name), cate_id=IFNULL(?,cate_id), price=IFNULL(?,price), discount=IFNULL(?,discount),order_num=IFNULL(?,order_num),create_at=?,description=IFNULL(?,description),Status=IFNULL(?,Status) WHERE Id=?"
+        var parameter = [name, cate_id, price, discount, order_num, new Date(), description, Status, Id]
+        await db.query("SELECT COUNT(name) as name FROM user WHERE name=?", [name], (err, row) => {
+            if (err) {
                 res.json({
                     error: true,
-                    message: "Dapicate Email"
+                    message: err
                 })
             } else {
-                db.query(sql, parameter, (err1, row) => {
-                    if (err1) {
-                        res.json({
-                            error: true,
-                            message: err1
-                        })
-                    }
-                    else {
-                        if (row.affectedRows > 0) {
-                            res.json({
-                                message: "Update success "
-                            })
-                        } else {
-
+                if (row[0].length > 0) {
+                    console.log(row)
+                    res.json({
+                        error: true,
+                        message: "Dapicate name"
+                    })
+                } else {
+                    db.query(sql, parameter, (err1, row) => {
+                        if (err1) {
                             res.json({
                                 error: true,
-                                message: "Please check "
+                                message: err1
                             })
                         }
+                        else {
+                            if (row.affectedRows > 0) {
+                                res.json({
+                                    message: "Update success "
+                                })
+                            } else {
+
+                                res.json({
+                                    error: true,
+                                    message: "Please check "
+                                })
+                            }
 
 
-                    }
-                })
+                        }
+                    })
+                }
             }
-        }
-    })
+        })
+    } else {
+        res.sendStatus(401)
+    }
 
 }
 
 
-const Delete = (req, res) => {
+const Delete = async (req, res) => {
     const id = req.params.id
     let message = {}
     if (isEmpty(id)) {
@@ -229,29 +204,33 @@ const Delete = (req, res) => {
         })
         return false
     }
-    db.query("DELETE FROM course WHERE Id=?", [id], (err, row) => {
-        if (err) {
-            res.json({
-                error: true,
-                message: err
-            })
-        }
-        else {
-            if (row.affectedRows > 0) {
-                res.json({
-                    message: "Delete success "
-                })
-            } else {
-
+    if (checkPermission(req, 1)) {
+        await db.query("DELETE FROM course WHERE Id=?", [id], (err, row) => {
+            if (err) {
                 res.json({
                     error: true,
-                    message: "id not found"
+                    message: err
                 })
             }
+            else {
+                if (row.affectedRows > 0) {
+                    res.json({
+                        message: "Delete success "
+                    })
+                } else {
+
+                    res.json({
+                        error: true,
+                        message: "id not found"
+                    })
+                }
 
 
-        }
-    })
+            }
+        })
+    } else {
+        res.sendStatus(401)
+    }
 
 }
 
